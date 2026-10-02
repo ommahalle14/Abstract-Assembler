@@ -428,3 +428,22 @@ bool parseInstruction(const vector<Token>& tokens, size_t start,
     }
 
     // 4. operand KINDS must be legal for the mnemonic
+    return checkOperandKinds(instr, errors);
+}
+
+// Handles one whole line: optional label, then optional instruction.
+void parseLine(const vector<Token>& tokens, vector<Instruction>& instructions,
+               vector<LabelDef>& labels, vector<AsmError>& errors) {
+    if (tokens.empty()) return;
+
+    size_t idx = 0;
+    if (tokens[0].type == TokenType::LABEL) {
+        LabelDef label;
+        label.name       = tokens[0].text;
+        label.instrIndex = (int)instructions.size();   // the next instruction
+        label.line       = tokens[0].line;
+        label.column     = tokens[0].column;
+        labels.push_back(label);
+        idx = 1;
+    }
+    if (idx >= tokens.size()) return;                  // label-only line
