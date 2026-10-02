@@ -701,3 +701,25 @@ void printSymbolTable(const unordered_map<string, Symbol>& table) {
         cout << list[i].name << " -> " << toHex(list[i].address) << "\n";
     }
 }
+// =====================================================================
+//  MAIN
+// =====================================================================
+bool readSourceFile(const string& path, vector<string>& lines) {
+    ifstream file(path.c_str());
+    if (!file) return false;
+    string line;
+    while (getline(file, line)) lines.push_back(line);
+    return true;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cout << "Usage: " << argv[0] << " <file.asm>\n";
+        return 1;
+    }
+
+    vector<string> sourceLines;
+    if (!readSourceFile(argv[1], sourceLines)) {
+        cout << "Error: could not open '" << argv[1] << "'\n";
+        return 1;
+    }
