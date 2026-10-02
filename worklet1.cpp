@@ -645,3 +645,13 @@ void worklet3_receive(const unordered_map<string, Symbol>& symbolTable) {
     cout << "Symbols received      : " << symbolTable.size() << "\n";
     cout << "[Worklet 3 will build the ELF symbol table + relocations here]\n";
 }
+// =====================================================================
+//  PRINTING
+// =====================================================================
+void printErrors(const vector<AsmError>& errors) {
+    for (size_t i = 0; i < errors.size(); i++) {
+        cout << errors[i].category << " at line " << errors[i].line
+             << ", column " << errors[i].column << ": " << errors[i].message << "\n";
+    }
+    cout << "\n" << errors.size() << " error(s) found. Nothing was handed to Worklet 2.\n";
+}
