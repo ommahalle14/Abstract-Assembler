@@ -447,3 +447,9 @@ void parseLine(const vector<Token>& tokens, vector<Instruction>& instructions,
         idx = 1;
     }
     if (idx >= tokens.size()) return;                  // label-only line
+
+    Instruction instr;
+    if (parseInstruction(tokens, idx, instr, errors)) {
+        instructions.push_back(instr);
+    }
+}
