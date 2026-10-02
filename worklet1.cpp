@@ -221,3 +221,21 @@ vector<Token> tokenizeLine(const string& line, int lineNumber, vector<AsmError>&
             tokens.push_back({TokenType::COMMA, ",", lineNumber, column});
             i++;
             continue;
+        }
+
+        // number: starts with a digit, or '-' followed by a digit
+        if (isdigit((unsigned char)c) ||
+            (c == '-' && i + 1 < line.size() && isdigit((unsigned char)line[i + 1]))) {
+            size_t start = i;
+            i++;
+            while (i < line.size() && (isalnum((unsigned char)line[i]) || line[i] == '_')) i++;
+            string text = line.substr(start, i - start);
+
+            long long ignored;
+            if (parseNumber(text, ignored)) {
+                tokens.push_back({TokenType::IMMEDIATE, text, lineNumber, column});
+            } else {
+                addError(errors, "Lexical Error", "invalid immediate '" + text + "'",
+                         lineNumber, column);
+            }
+            continue;
