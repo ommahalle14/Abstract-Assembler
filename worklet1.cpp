@@ -470,3 +470,25 @@ bool addSymbol(unordered_map<string, Symbol>& table, const string& name,
     table[name] = s;
     return true;
 }
+// =====================================================================
+//  VED : Pass 1  (Location Counter + label addresses)
+//
+//  Instruction sizes (chosen so they match a real x86-32 assembler, and
+//  fixed so no size guessing is needed later):
+//      MOV reg, imm          5      (B8+r imm32)
+//      MOV reg, reg          2
+//      ADD/SUB/CMP reg, reg  2
+//      ADD/SUB/CMP reg, imm  3 if imm fits in signed 8 bits (83 /r ib)
+//                            5 if reg is EAX (short form: op imm32)
+//                            6 otherwise (81 /r id)
+//      INC/DEC/PUSH/POP reg  1
+//      NOP / RET             1
+//      JMP / CALL            5      (near, rel32)
+//      JE / JNE              6      (near, 0F 8x rel32)
+//  Branches always use the near form so their size never depends on the
+//  distance to the label. Worklet 2 must encode the same near forms.
+// =====================================================================
+bool fitsInt8(long long n) {
+    if (n > 2147483647LL) n -= 4294967296LL;   // 0xFFFFFFFF is really -1
+    return n >= -128 && n <= 127;
+}
