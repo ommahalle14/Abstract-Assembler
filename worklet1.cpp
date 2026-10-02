@@ -274,3 +274,40 @@ vector<Token> tokenizeLine(const string& line, int lineNumber, vector<AsmError>&
         i++;
     }
     return tokens;
+}
+
+// =====================================================================
+//  OM : Parser  (tokens -> Instruction IR)
+//  Grammar of one line:   [LABEL] [MNEMONIC [operand {, operand}]]
+// =====================================================================
+
+// Checks that the operand KINDS are legal for this mnemonic.
+bool checkOperandKinds(const Instruction& instr, vector<AsmError>& errors) {
+    const string& m = instr.mnemonic;
+    bool ok = true;
+
+    if (m == "MOV" || m == "ADD" || m == "SUB" || m == "CMP") {
+        const Operand& a = instr.operands[0];
+        const Operand& b = instr.operands[1];
+        if (a.kind != "REG") {
+            string msg = (a.kind == "SYM") ? "invalid register '" + a.value + "'"
+                                           : "first operand must be a register";
+            addError(errors, "Syntax Error", msg, instr.line, a.column);
+            ok = false;
+        }
+        if (b.kind == "SYM") {
+            addError(errors, "Syntax Error",
+                     "invalid register '" + b.value + "' (expected register or immediate)",
+                     instr.line, b.column);
+            ok = false;
+        }
+    }
+    else if (m == "LOAD") {
+        const Operand& a = instr.operands[0];
+        const Operand& b = instr.operands[1];
+        if (a.kind != "REG") {
+            addError(errors, "Syntax Error", "first operand of LOAD must be a register", instr.line, a.column);
+            ok = false;
+        }
+        if (b.kind == "IMM") {
+            addError(errors, "Syntax Error", "second operand of LOAD cannot be an immediate (use MOV)", instr.line, b.column);
