@@ -405,3 +405,26 @@ bool parseInstruction(const vector<Token>& tokens, size_t start,
                      comma.line, comma.column + 1);
             return false;
         }
+    }
+
+    // 3. operand COUNT must match the mnemonic
+    int expected = expectedOperandCount(instr.mnemonic);
+    int actual   = (int)instr.operands.size();
+
+    if (actual < expected) {
+        const Token& last = tokens.back();
+        addError(errors, "Syntax Error",
+                 "missing operand: " + instr.mnemonic + " expects " + to_string(expected) +
+                 " operand(s), found " + to_string(actual),
+                 last.line, last.column + (int)last.text.size());
+        return false;
+    }
+    if (actual > expected) {
+        addError(errors, "Syntax Error",
+                 "too many operands: " + instr.mnemonic + " expects " + to_string(expected) +
+                 " operand(s), found " + to_string(actual),
+                 instr.line, instr.operands[expected].column);
+        return false;
+    }
+
+    // 4. operand KINDS must be legal for the mnemonic
