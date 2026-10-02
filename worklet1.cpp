@@ -239,3 +239,38 @@ vector<Token> tokenizeLine(const string& line, int lineNumber, vector<AsmError>&
                          lineNumber, column);
             }
             continue;
+        }
+
+        // word: mnemonic, register, label or identifier
+        if (isalpha((unsigned char)c) || c == '_') {
+            size_t start = i;
+            while (i < line.size() && (isalnum((unsigned char)line[i]) || line[i] == '_')) i++;
+            string word  = line.substr(start, i - start);
+            string upper = toUpper(word);
+
+            bool followedByColon = (i < line.size() && line[i] == ':');
+
+            if (followedByColon) {
+                i++;   // consume ':'
+                if (isValidMnemonic(upper) || isValidRegister(upper)) {
+                    addError(errors, "Lexical Error",
+                             "label name '" + word + "' is a reserved word", lineNumber, column);
+                } else {
+                    tokens.push_back({TokenType::LABEL, word, lineNumber, column});
+                }
+            } else if (isValidMnemonic(upper)) {
+                tokens.push_back({TokenType::MNEMONIC, upper, lineNumber, column});
+            } else if (isValidRegister(upper)) {
+                tokens.push_back({TokenType::REGISTER, upper, lineNumber, column});
+            } else {
+                tokens.push_back({TokenType::IDENTIFIER, word, lineNumber, column});
+            }
+            continue;
+        }
+
+        // anything else is not part of our language
+        addError(errors, "Lexical Error", string("invalid character '") + c + "'",
+                 lineNumber, column);
+        i++;
+    }
+    return tokens;
