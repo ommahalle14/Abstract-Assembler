@@ -522,3 +522,26 @@ void defineLabel(const LabelDef& label, unsigned int address,
                  label.line, label.column);
     }
 }
+// Returns the final value of the Location Counter (= total code size).
+unsigned int pass1(vector<Instruction>& instructions, const vector<LabelDef>& labels,
+                   unordered_map<string, Symbol>& table, vector<AsmError>& errors) {
+    unsigned int LC = 0;      // Location Counter starts at 0
+    size_t nextLabel = 0;
+
+    for (size_t i = 0; i < instructions.size(); i++) {
+        // labels that sit just before instruction i get the current LC
+        while (nextLabel < labels.size() && labels[nextLabel].instrIndex == (int)i) {
+            defineLabel(labels[nextLabel], LC, table, errors);
+            nextLabel++;
+        }
+        instructions[i].address = LC;
+        instructions[i].length  = getInstructionLength(instructions[i]);
+        LC += instructions[i].length;
+    }
+    // labels at the very end of the file point to the final LC
+    while (nextLabel < labels.size()) {
+        defineLabel(labels[nextLabel], LC, table, errors);
+        nextLabel++;
+    }
+    return LC;
+}
