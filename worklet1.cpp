@@ -492,3 +492,24 @@ bool fitsInt8(long long n) {
     if (n > 2147483647LL) n -= 4294967296LL;   // 0xFFFFFFFF is really -1
     return n >= -128 && n <= 127;
 }
+int getInstructionLength(const Instruction& instr) {
+    const string& m = instr.mnemonic;
+
+    if (m == "MOV") return (instr.operands[1].kind == "IMM") ? 5 : 2;
+    
+    if (m == "LOAD" || m == "STORE") {
+        return (instr.operands[0].kind == "SYM" || instr.operands[1].kind == "SYM") ? 6 : 2;
+    }
+
+    if (m == "ADD" || m == "SUB" || m == "CMP") {
+        if (instr.operands[1].kind == "REG") return 2;
+        if (fitsInt8(instr.operands[1].number)) return 3;
+        if (instr.operands[0].value == "EAX") return 5;
+        return 6;
+    }
+    if (m == "INC" || m == "DEC" || m == "PUSH" || m == "POP") return 1;
+    if (m == "NOP" || m == "RET") return 1;
+    if (m == "JMP" || m == "CALL") return 5;
+    if (m == "JE" || m == "JNE") return 6;
+    return 1;   // not reachable: the parser only lets valid mnemonics through
+}
