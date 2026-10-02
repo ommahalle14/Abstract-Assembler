@@ -311,3 +311,37 @@ bool checkOperandKinds(const Instruction& instr, vector<AsmError>& errors) {
         }
         if (b.kind == "IMM") {
             addError(errors, "Syntax Error", "second operand of LOAD cannot be an immediate (use MOV)", instr.line, b.column);
+            ok = false;
+        }
+    }
+    else if (m == "STORE") {
+        const Operand& a = instr.operands[0];
+        const Operand& b = instr.operands[1];
+        if (a.kind == "IMM") {
+            addError(errors, "Syntax Error", "first operand of STORE cannot be an immediate", instr.line, a.column);
+            ok = false;
+        }
+        if (b.kind != "REG") {
+            addError(errors, "Syntax Error", "second operand of STORE must be a register", instr.line, b.column);
+            ok = false;
+        }
+    }
+    else if (m == "INC" || m == "DEC" || m == "PUSH" || m == "POP") {
+        const Operand& a = instr.operands[0];
+        if (a.kind != "REG") {
+            string msg = (a.kind == "SYM") ? "invalid register '" + a.value + "'"
+                                           : "operand must be a register";
+            addError(errors, "Syntax Error", msg, instr.line, a.column);
+            ok = false;
+        }
+    }
+    else if (m == "JMP" || m == "CALL" || m == "JE" || m == "JNE") {
+        const Operand& a = instr.operands[0];
+        if (a.kind != "SYM") {
+            addError(errors, "Syntax Error", "expected a label as branch target",
+                     instr.line, a.column);
+            ok = false;
+        }
+    }
+    return ok;
+}
