@@ -79,3 +79,18 @@ struct Instruction {
     int             column;
     int             displacement;  // branches only: target - (address+length)
 };
+
+// A label found by the parser. instrIndex = index of the instruction that
+// follows it (so Pass 1 knows which address the label gets).
+struct LabelDef {
+    string name;
+    int    instrIndex;
+    int    line;
+    int    column;
+};
+
+struct Symbol {
+    string       name;
+    unsigned int address;
+    int          line;      // where it was defined (for duplicate errors)
+};
