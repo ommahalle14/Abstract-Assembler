@@ -373,3 +373,35 @@ bool parseInstruction(const vector<Token>& tokens, size_t start,
     size_t idx = start + 1;
     while (idx < tokens.size()) {
         const Token& t = tokens[idx];
+        Operand op;
+
+        if (t.type == TokenType::REGISTER) {
+            op = makeOperand("REG", t.text, t.column);
+        } else if (t.type == TokenType::IMMEDIATE) {
+            op = makeOperand("IMM", t.text, t.column);
+            parseNumber(t.text, op.number);   // already validated by the lexer
+        } else if (t.type == TokenType::IDENTIFIER) {
+            op = makeOperand("SYM", t.text, t.column);
+        } else {
+            addError(errors, "Syntax Error", "expected an operand, found '" + t.text + "'",
+                     t.line, t.column);
+            return false;
+        }
+        instr.operands.push_back(op);
+        idx++;
+
+        if (idx >= tokens.size()) break;               // end of line: done
+
+        if (tokens[idx].type != TokenType::COMMA) {    // operands must be separated by ','
+            addError(errors, "Syntax Error", "expected comma",
+                     tokens[idx].line, tokens[idx].column);
+            return false;
+        }
+        idx++;                                         // skip the comma
+
+        if (idx >= tokens.size()) {                    // line ended right after a comma
+            const Token& comma = tokens[idx - 1];
+            addError(errors, "Syntax Error", "missing operand after comma",
+                     comma.line, comma.column + 1);
+            return false;
+        }
