@@ -632,3 +632,10 @@ string toHex(unsigned int value) {
     out << hex << value;
     return out.str();
 }
+void worklet2_receive(const Worklet1Output& ir) {
+    cout << "WORKLET 2 INPUT (received by function call)\n";
+    cout << "-------------------------\n";
+    cout << "Instructions received : " << ir.instructions.size() << "\n";
+    cout << "Total code size       : " << ir.finalLC << " bytes\n";
+    cout << "[Worklet 2 will encode each instruction here: ModR/M, immediates, ...]\n";
+}
