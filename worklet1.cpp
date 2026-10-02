@@ -513,3 +513,12 @@ int getInstructionLength(const Instruction& instr) {
     if (m == "JE" || m == "JNE") return 6;
     return 1;   // not reachable: the parser only lets valid mnemonics through
 }
+void defineLabel(const LabelDef& label, unsigned int address,
+                 unordered_map<string, Symbol>& table, vector<AsmError>& errors) {
+    if (!addSymbol(table, label.name, address, label.line)) {
+        addError(errors, "Symbol Error",
+                 "duplicate symbol '" + label.name + "' (first defined at line " +
+                 to_string(table[label.name].line) + ")",
+                 label.line, label.column);
+    }
+}
