@@ -183,3 +183,14 @@ bool parseNumber(const string& text, long long& value) {
     }
     value = result;
     return true;
+}
+
+Operand makeOperand(const string& kind, const string& value, int column) {
+    Operand op;
+    op.kind            = kind;
+    op.value           = value;
+    op.column          = column;
+    op.number          = 0;
+    op.resolved        = false;
+    op.resolvedAddress = 0;
+    return op;
