@@ -345,3 +345,31 @@ bool checkOperandKinds(const Instruction& instr, vector<AsmError>& errors) {
     }
     return ok;
 }
+
+// Parses tokens[start..end] as one instruction. Returns false on error
+// (the error is already recorded).
+bool parseInstruction(const vector<Token>& tokens, size_t start,
+                      Instruction& instr, vector<AsmError>& errors) {
+    const Token& first = tokens[start];
+    instr.line         = first.line;
+    instr.column       = first.column;
+    instr.address      = 0;
+    instr.length       = 0;
+    instr.displacement = 0;
+
+    // 1. first token must be a valid mnemonic
+    if (first.type != TokenType::MNEMONIC) {
+        if (first.type == TokenType::IDENTIFIER)
+            addError(errors, "Syntax Error", "invalid mnemonic '" + first.text + "'",
+                     first.line, first.column);
+        else
+            addError(errors, "Syntax Error", "expected a mnemonic, found '" + first.text + "'",
+                     first.line, first.column);
+        return false;
+    }
+    instr.mnemonic = first.text;
+
+    // 2. read operands:  operand {, operand}
+    size_t idx = start + 1;
+    while (idx < tokens.size()) {
+        const Token& t = tokens[idx];
