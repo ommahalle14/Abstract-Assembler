@@ -639,3 +639,9 @@ void worklet2_receive(const Worklet1Output& ir) {
     cout << "Total code size       : " << ir.finalLC << " bytes\n";
     cout << "[Worklet 2 will encode each instruction here: ModR/M, immediates, ...]\n";
 }
+void worklet3_receive(const unordered_map<string, Symbol>& symbolTable) {
+    cout << "\nWORKLET 3 INPUT (received by function call)\n";
+    cout << "-------------------------\n";
+    cout << "Symbols received      : " << symbolTable.size() << "\n";
+    cout << "[Worklet 3 will build the ELF symbol table + relocations here]\n";
+}
