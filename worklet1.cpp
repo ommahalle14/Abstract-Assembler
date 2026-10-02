@@ -40,3 +40,23 @@
 
 using namespace std;
 
+// ---------------------------------------------------------------------
+// DATA STRUCTURES (shared contract with Worklet 2 and Worklet 3)
+// ---------------------------------------------------------------------
+
+// Token types. DIRECTIVE can be added here later.
+enum class TokenType {
+    MNEMONIC,    // MOV, ADD, ...
+    REGISTER,    // EAX, EBX, ...
+    IMMEDIATE,   // 5, -3, 0x1000
+    IDENTIFIER,  // a name used as an operand (label reference)
+    LABEL,       // name followed by ':'
+    COMMA
+};
+
+struct Token {
+    TokenType type;
+    string    text;
+    int       line;
+    int       column;   // 1-based
+};
