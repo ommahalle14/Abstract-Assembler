@@ -143,3 +143,8 @@ int expectedOperandCount(const string& m) {
 
 bool isValidMnemonic(const string& upper) {
     return expectedOperandCount(upper) != -1;
+}
+
+bool isValidRegister(const string& upper) {
+    return upper == "EAX" || upper == "EBX" || upper == "ECX" || upper == "EDX" ||
+           upper == "ESI" || upper == "EDI" || upper == "ESP" || upper == "EBP";
