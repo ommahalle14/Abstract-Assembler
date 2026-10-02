@@ -129,3 +129,17 @@ string toUpper(string s) {
     for (size_t i = 0; i < s.size(); i++) s[i] = (char)toupper((unsigned char)s[i]);
     return s;
 }
+
+// How many operands each mnemonic takes. -1 means "not a valid mnemonic".
+// To support a new instruction, add it here first.
+int expectedOperandCount(const string& m) {
+    if (m == "MOV" || m == "ADD" || m == "SUB" || m == "CMP") return 2;
+    if (m == "LOAD" || m == "STORE") return 2;
+    if (m == "INC" || m == "DEC" || m == "PUSH" || m == "POP") return 1;
+    if (m == "JMP" || m == "CALL" || m == "JE" || m == "JNE") return 1;
+    if (m == "NOP" || m == "RET") return 0;
+    return -1;
+}
+
+bool isValidMnemonic(const string& upper) {
+    return expectedOperandCount(upper) != -1;
