@@ -723,3 +723,26 @@ int main(int argc, char* argv[]) {
         cout << "Error: could not open '" << argv[1] << "'\n";
         return 1;
     }
+
+    // ---- Worklet 1 ----
+    Worklet1Output result = runWorklet1(sourceLines);
+
+    if (!result.ok) {
+        printErrors(result.errors);
+        return 1;
+    }
+
+    printIR(result.instructions);
+    cout << "\n";
+    printSymbolTable(result.symbolTable);
+    cout << "\nFinal Location Counter: " << toHex(result.finalLC)
+         << " (" << result.finalLC << " bytes)\n\n";
+
+    // ---- Handoff by function call (no files) ----
+    worklet2_receive(result);
+    worklet3_receive(result.symbolTable);
+
+    cout << "\nWorklet 1 completed: validated IR and symbol table passed to "
+            "Worklet 2 and Worklet 3 by function call.\n";
+    return 0;
+}
