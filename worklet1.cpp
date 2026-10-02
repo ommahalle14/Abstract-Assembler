@@ -453,3 +453,9 @@ void parseLine(const vector<Token>& tokens, vector<Instruction>& instructions,
         instructions.push_back(instr);
     }
 }
+// =====================================================================
+//  VED : Symbol Table
+// =====================================================================
+bool isDefined(const unordered_map<string, Symbol>& table, const string& name) {
+    return table.find(name) != table.end();
+}
