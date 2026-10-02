@@ -194,3 +194,30 @@ Operand makeOperand(const string& kind, const string& value, int column) {
     op.resolved        = false;
     op.resolvedAddress = 0;
     return op;
+}
+
+// =====================================================================
+//  POOJA : Lexer / Tokenizer
+//  Turns ONE source line into tokens. Every token remembers its line and
+//  column. Bad characters / bad numbers are reported as errors; the lexer
+//  never crashes and never reads outside the string.
+// =====================================================================
+vector<Token> tokenizeLine(const string& line, int lineNumber, vector<AsmError>& errors) {
+    vector<Token> tokens;
+    size_t i = 0;
+
+    while (i < line.size()) {
+        char c = line[i];
+        int column = (int)i + 1;
+
+        // skip white space
+        if (isspace((unsigned char)c)) { i++; continue; }
+
+        // comment: ignore the rest of the line
+        if (c == ';') break;
+
+        // comma
+        if (c == ',') {
+            tokens.push_back({TokenType::COMMA, ",", lineNumber, column});
+            i++;
+            continue;
