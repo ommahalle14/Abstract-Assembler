@@ -110,3 +110,22 @@ struct Worklet1Output {
     unsigned int                  finalLC;   // total code size in bytes
     bool                          ok;        // true if no errors at all
 };
+
+// ---------------------------------------------------------------------
+// SMALL HELPERS
+// ---------------------------------------------------------------------
+
+void addError(vector<AsmError>& errors, const string& category,
+              const string& message, int line, int column) {
+    AsmError e;
+    e.category = category;
+    e.message  = message;
+    e.line     = line;
+    e.column   = column;
+    errors.push_back(e);
+}
+
+string toUpper(string s) {
+    for (size_t i = 0; i < s.size(); i++) s[i] = (char)toupper((unsigned char)s[i]);
+    return s;
+}
