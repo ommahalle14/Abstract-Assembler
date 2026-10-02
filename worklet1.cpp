@@ -620,3 +620,15 @@ Worklet1Output runWorklet1(const vector<string>& sourceLines) {
     out.ok = out.errors.empty();
     return out;
 }
+// =====================================================================
+//  WORKLET 2 / WORKLET 3 ENTRY POINTS  (placeholders for the other teams)
+//  These receive Worklet 1's result DIRECTLY as function arguments.
+//  They only report what they received; they do not encode or build ELF.
+// =====================================================================
+string toHex(unsigned int value) {
+    ostringstream out;
+    out << "0x";
+    if (value < 16) out << "0";
+    out << hex << value;
+    return out.str();
+}
