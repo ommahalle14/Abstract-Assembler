@@ -148,3 +148,38 @@ bool isValidMnemonic(const string& upper) {
 bool isValidRegister(const string& upper) {
     return upper == "EAX" || upper == "EBX" || upper == "ECX" || upper == "EDX" ||
            upper == "ESI" || upper == "EDI" || upper == "ESP" || upper == "EBP";
+}
+
+// Reads decimal (5, -3) or hex (0x1F) numbers that fit in 32 bits.
+// Returns false for anything else. Never throws.
+bool parseNumber(const string& text, long long& value) {
+    size_t i = 0;
+    bool negative = false;
+    if (i < text.size() && text[i] == '-') { negative = true; i++; }
+    if (i >= text.size()) return false;
+
+    int base = 10;
+    if (i + 1 < text.size() && text[i] == '0' && (text[i + 1] == 'x' || text[i + 1] == 'X')) {
+        base = 16;
+        i += 2;
+        if (i >= text.size()) return false;
+    }
+
+    long long result = 0;
+    for (; i < text.size(); i++) {
+        char c = text[i];
+        int digit;
+        if (c >= '0' && c <= '9')                 digit = c - '0';
+        else if (base == 16 && c >= 'a' && c <= 'f') digit = c - 'a' + 10;
+        else if (base == 16 && c >= 'A' && c <= 'F') digit = c - 'A' + 10;
+        else return false;
+
+        result = result * base + digit;
+        if (result > 4294967295LL) return false;   // more than 32 bits
+    }
+    if (negative) {
+        result = -result;
+        if (result < -2147483648LL) return false;
+    }
+    value = result;
+    return true;
