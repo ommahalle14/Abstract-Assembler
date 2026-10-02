@@ -674,3 +674,30 @@ void printIR(const vector<Instruction>& instructions) {
         if (i + 1 < instructions.size()) cout << "\n";
     }
 }
+void printSymbolTable(const unordered_map<string, Symbol>& table) {
+    cout << "SYMBOL TABLE\n";
+    cout << "-------------------------\n";
+    if (table.empty()) {
+        cout << "No symbols defined\n";
+        return;
+    }
+    // copy to a vector and sort by address (then name) so output is deterministic
+    vector<Symbol> list;
+    for (unordered_map<string, Symbol>::const_iterator it = table.begin(); it != table.end(); ++it)
+        list.push_back(it->second);
+
+    for (size_t i = 0; i < list.size(); i++) {         // selection sort
+        size_t best = i;
+        for (size_t j = i + 1; j < list.size(); j++) {
+            if (list[j].address < list[best].address ||
+                (list[j].address == list[best].address && list[j].name < list[best].name))
+                best = j;
+        }
+        Symbol temp = list[i];
+        list[i]     = list[best];
+        list[best]  = temp;
+    }
+    for (size_t i = 0; i < list.size(); i++) {
+        cout << list[i].name << " -> " << toHex(list[i].address) << "\n";
+    }
+}
