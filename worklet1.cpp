@@ -609,3 +609,14 @@ Worklet1Output runWorklet1(const vector<string>& sourceLines) {
 
         parseLine(tokens, out.instructions, labels, out.errors);
     }
+
+    // Stage 3: Pass 1  (addresses + symbol table)
+    out.finalLC = pass1(out.instructions, labels, out.symbolTable, out.errors);
+
+    // Stage 4: Pass 2  (resolve label references)
+    pass2Resolve(out.instructions, out.symbolTable, out.errors);
+
+    sortErrorsByPosition(out.errors);
+    out.ok = out.errors.empty();
+    return out;
+}
