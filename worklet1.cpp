@@ -655,3 +655,22 @@ void printErrors(const vector<AsmError>& errors) {
     }
     cout << "\n" << errors.size() << " error(s) found. Nothing was handed to Worklet 2.\n";
 }
+void printIR(const vector<Instruction>& instructions) {
+    cout << "INTERMEDIATE REPRESENTATION\n";
+    cout << "-------------------------\n";
+    for (size_t i = 0; i < instructions.size(); i++) {
+        const Instruction& in = instructions[i];
+        cout << "Instruction " << (i + 1) << ":\n";
+        cout << "Mnemonic: " << in.mnemonic << "\n";
+        for (size_t o = 0; o < in.operands.size(); o++) {
+            cout << "Operand " << (o + 1) << ": " << in.operands[o].value << "\n";
+        }
+        cout << "Address: " << toHex(in.address) << "\n";
+        cout << "Length: " << in.length << "\n";
+        if (!in.operands.empty() && in.operands[0].resolved) {
+            cout << "Target Address: " << toHex(in.operands[0].resolvedAddress) << "\n";
+            cout << "Displacement: " << in.displacement << "\n";
+        }
+        if (i + 1 < instructions.size()) cout << "\n";
+    }
+}
