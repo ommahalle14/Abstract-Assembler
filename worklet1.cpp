@@ -459,3 +459,14 @@ void parseLine(const vector<Token>& tokens, vector<Instruction>& instructions,
 bool isDefined(const unordered_map<string, Symbol>& table, const string& name) {
     return table.find(name) != table.end();
 }
+// Returns false if the name already exists (duplicate symbol).
+bool addSymbol(unordered_map<string, Symbol>& table, const string& name,
+               unsigned int address, int line) {
+    if (isDefined(table, name)) return false;
+    Symbol s;
+    s.name    = name;
+    s.address = address;
+    s.line    = line;
+    table[name] = s;
+    return true;
+}
