@@ -60,3 +60,12 @@ struct Token {
     int       line;
     int       column;   // 1-based
 };
+
+struct Operand {
+    string       kind;             // "REG", "IMM" or "SYM"
+    string       value;            // text as written / normalised
+    int          column;           // where it starts in the source line
+    long long    number;           // numeric value (IMM only)
+    bool         resolved;         // SYM only: set by Pass 2
+    unsigned int resolvedAddress;  // SYM only: address of the label
+};
