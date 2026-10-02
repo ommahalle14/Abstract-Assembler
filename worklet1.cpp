@@ -545,3 +545,11 @@ unsigned int pass1(vector<Instruction>& instructions, const vector<LabelDef>& la
     }
     return LC;
 }
+// =====================================================================
+//  MAYURI : Pass 2  (resolve forward + backward references)
+//  Every SYM operand is looked up in the symbol table built by Pass 1.
+//  Because Pass 1 already saw the WHOLE file, a jump to a label defined
+//  LATER (forward reference) works exactly like a jump to an earlier one.
+//  Undefined symbols are reported with line and column.
+//  Still NO encoding: we only store the target address and displacement.
+// =====================================================================
