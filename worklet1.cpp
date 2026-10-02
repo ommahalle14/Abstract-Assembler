@@ -580,3 +580,18 @@ bool pass2Resolve(vector<Instruction>& instructions,
     }
     return ok;
 }
+// =====================================================================
+//  DRIVER : runs the whole Worklet 1 pipeline and returns the result
+// =====================================================================
+void sortErrorsByPosition(vector<AsmError>& e) {      // simple insertion sort
+    for (size_t i = 1; i < e.size(); i++) {
+        AsmError key = e[i];
+        size_t j = i;
+        while (j > 0 && (e[j - 1].line > key.line ||
+                        (e[j - 1].line == key.line && e[j - 1].column > key.column))) {
+            e[j] = e[j - 1];
+            j--;
+        }
+        e[j] = key;
+    }
+}
