@@ -595,3 +595,17 @@ void sortErrorsByPosition(vector<AsmError>& e) {      // simple insertion sort
         e[j] = key;
     }
 }
+Worklet1Output runWorklet1(const vector<string>& sourceLines) {
+    Worklet1Output out;
+    vector<LabelDef> labels;
+
+    // Stage 1 + 2: lex and parse every line. A bad line is reported and
+    // skipped so that later lines can still be checked.
+    for (size_t i = 0; i < sourceLines.size(); i++) {
+        size_t errorsBefore = out.errors.size();
+
+        vector<Token> tokens = tokenizeLine(sourceLines[i], (int)i + 1, out.errors);
+        if (out.errors.size() != errorsBefore) continue;   // lexer error: skip line
+
+        parseLine(tokens, out.instructions, labels, out.errors);
+    }
