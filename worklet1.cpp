@@ -69,3 +69,13 @@ struct Operand {
     bool         resolved;         // SYM only: set by Pass 2
     unsigned int resolvedAddress;  // SYM only: address of the label
 };
+
+struct Instruction {
+    string          mnemonic;
+    vector<Operand> operands;
+    unsigned int    address;       // set by Pass 1
+    int             length;        // set by Pass 1 (bytes)
+    int             line;
+    int             column;
+    int             displacement;  // branches only: target - (address+length)
+};
