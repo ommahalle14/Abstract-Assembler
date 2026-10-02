@@ -94,3 +94,19 @@ struct Symbol {
     unsigned int address;
     int          line;      // where it was defined (for duplicate errors)
 };
+
+struct AsmError {
+    string category;   // "Lexical Error", "Syntax Error", "Symbol Error"
+    string message;
+    int    line;
+    int    column;
+};
+
+// Everything Worklet 1 hands over to the next worklets.
+struct Worklet1Output {
+    vector<Instruction>           instructions;
+    unordered_map<string, Symbol> symbolTable;
+    vector<AsmError>              errors;
+    unsigned int                  finalLC;   // total code size in bytes
+    bool                          ok;        // true if no errors at all
+};
